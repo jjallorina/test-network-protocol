@@ -33,8 +33,8 @@ struct sockaddr_storage
 };
 */
 
-#define USEWEB
-#if defined(USEWEB)
+#define USE_HTTP_PORT
+#if defined(USE_HTTP_PORT)
 #define PORT "8080"
 #else
 #define PORT "4000"
