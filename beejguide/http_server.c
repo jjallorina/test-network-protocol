@@ -81,6 +81,11 @@ int main(int argc, char **argv)
     //hints.ai_family = AF_INET;
     hints.ai_socktype = SOCK_STREAM;
     hints.ai_flags = AI_PASSIVE;
+    hints.ai_protocol = 0;
+    hints.ai_addr = NULL;
+    hints.ai_canonname = NULL;
+    hints.ai_next = NULL;
+
 
     if((rv = getaddrinfo( NULL, PORT, &hints, &servinfo) != 0))
     {
@@ -143,7 +148,8 @@ int main(int argc, char **argv)
     printf("server running: waiting for connections . . .\n");
     
 //    const char message[] = "This message sent to you . . .";
-    char *http_message = "HTTP/1.1 200 OK\nContent-Type: text/plain\nContent-Length: 12\n\nHello world!"; 
+    char *http_message = "HTTP/1.1 200 OK\nContent-Type: \
+    text/plain\nContent-Length: 14\n\nHello world!!!"; 
     char buffer[30000] = {0};
     while(1){
         sin_size = sizeof(their_addr);
