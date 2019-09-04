@@ -83,7 +83,7 @@ int main(int argc, char **argv)
 
     if((rv = getaddrinfo( NULL, PORT, &hints, &servinfo) != 0))
     {
-        fprintf(stderr, "getaddrinfo: [%s]\n", gai_strerror(status));
+        fprintf(stderr, "getaddrinfo: [%s]\n", gai_strerror(rv));
         return 1;
     }
 
@@ -141,7 +141,9 @@ int main(int argc, char **argv)
 
     printf("server running: waiting for connections . . .\n");
     
-    const char message[] = "This message sent to you . . .";
+//    const char message[] = "This message sent to you . . .";
+    char *http_message = "HTTP/1.1 200 OK\nContent-Type: text/plain\nContent-Length: 12\n\nHello world!"; 
+    char buffer[30000] = {0};
     while(1){
         sin_size = sizeof(their_addr);
         if( (newfd = accept(sockfd, (struct sockaddr *) &their_addr, &sin_size))
@@ -154,16 +156,28 @@ int main(int argc, char **argv)
         inet_ntop(their_addr.ss_family, get_in_addr((struct sockaddr
         *)&their_addr), s, sizeof(s)); 
         printf("server running: got connection from [%s]\n", s);
-    
-        if( send(newfd, message, sizeof(message), 0) == -1)
+     
+        if((recv(newfd, buffer, sizeof(buffer), 0)) == -1)
+        {
+            perror("recv:");
+            continue;
+        }
+        
+        printf("reading request message received from client \n [%s] \n", buffer);
+
+        if(send(newfd, http_message, strlen(http_message), 0) == -1)
         {
             perror("send:");
             close(newfd);
             close(sockfd);
             exit(1);
         }
+        else
+            printf("sending response message to client \n [%s] \n", http_message);  
+        
     }
-    close(newfd); 
+    
     close(sockfd);
     return 0;
+    
 }
