@@ -69,6 +69,7 @@ int main(int argc, char **argv)
     struct addrinfo hints, *servinfo = NULL, *p = NULL;
     struct sockaddr_storage their_addr;
     socklen_t sin_size;
+    ssize_t nread = 0;
     struct sigaction sa;
     int yes = 1;
     char s[INET6_ADDRSTRLEN];
@@ -157,13 +158,14 @@ int main(int argc, char **argv)
         *)&their_addr), s, sizeof(s)); 
         printf("server running: got connection from [%s]\n", s);
      
-        if((recv(newfd, buffer, sizeof(buffer), 0)) == -1)
+        if((nread = recv(newfd, buffer, sizeof(buffer), 0)) == -1)
         {
             perror("recv:");
             continue;
         }
         
-        printf("reading request message received from client \n [%s] \n", buffer);
+        printf("reading request message received from client [%ld bytes received]\n",nread);
+        printf("received message \n [%s]\n", buffer);
 
         if(send(newfd, http_message, strlen(http_message), 0) == -1)
         {
